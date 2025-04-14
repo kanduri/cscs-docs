@@ -1,9 +1,18 @@
 [](){#ref-uenv-gromacs}
 # GROMACS
 
-[GROMACS](https://www.gromacs.org) (GROningen Machine for Chemical Simulations) is a versatile and widely-used open source package to perform molecular dynamics, i.e. simulate the Newtonian equations of motion for systems with hundreds to millions of particles.
+[GROMACS] (GROningen Machine for Chemical Simulations) is a versatile and widely-used open source package to perform molecular dynamics, i.e. simulate the Newtonian equations of motion for systems with hundreds to millions of particles.
 
 It is primarily designed for biochemical molecules like proteins, lipids and nucleic acids that have a lot of complicated bonded interactions, but since GROMACS is extremely fast at calculating the nonbonded interactions (that usually dominate simulations) many groups are also using it for research on non-biological systems, e.g. polymers.
+
+!!! note "uenvs"
+
+    [GROMACS] is provided on [ALPS][platforms-on-alps] via [uenv][ref-uenv].
+    Please have a look at the [uenv documentation][ref-uenv] for more information about uenvs and how to use them.
+
+## Licensing Terms & Conditions
+
+GROMACS is a joint effort, with contributions from developers around the world: users agree to acknowledge use of GROMACS in any reports or publications of results obtained with the Software (see [GROMACS Homepage](https://www.gromacs.org/about.html) for details).
 
 ## Key Features
 
@@ -18,10 +27,6 @@ It is primarily designed for biochemical molecules like proteins, lipids and nuc
 5. **User-Friendly Interface**: GROMACS provides a command-line interface (CLI) and a set of well-documented input and control files, making it accessible to both novice and expert users. It offers flexibility in defining system parameters, simulation conditions, and analysis options through easily modifiable input files.
 
 6. **Integration with Other Software**: GROMACS can be integrated with other software packages and tools to perform advanced analysis and extend its capabilities. It supports interoperability with visualization tools like VMD and PyMOL, analysis packages like GROMACS Analysis Tools (GROMACS Tools) and MDAnalysis, and scripting languages such as Python, allowing users to leverage a wide range of complementary tools.
-
-## Licensing Terms & Conditions
-
-GROMACS is a joint effort, with contributions from developers around the world: users agree to acknowledge use of GROMACS in any reports or publications of results obtained with the Software (see [GROMACS Homepage](https://www.gromacs.org/about.html) for details).
 
 ## Daint on Alps (GH200)
 
@@ -39,7 +44,6 @@ gmx_mpi --version                             # check GROMACS version
 ```
 
 The images also provide two alternative views, namely `plumed` and `develop`.
-After starting the pulled image using `uenv start ...` , one may do the following see the available views.
 
 ```console
 $ uenv status
@@ -54,7 +58,7 @@ $ uenv status
 
 The `develop` view has all the required dependencies or GROMACS without the program itself. This is meant for those users who want to use a customized variant of GROMACS for their simulation which they build from source. This view makes it convenient for users as it provides the required compilers (GCC) along with the dependencies such as CMake, CUDA, hwloc, Cray MPICH, among many others which their GROMACS can use during build and installation. Users must enable this view each time they want to use their **custom GROMACS installation**.
 
-The `plumed` view contains GROMACS 2022.5 (older version) with PLUMED 2.9.0. This is due to the compatibility requirements of PLUMED. CSCS will periodically update these user environment images to feature newer versions as they are made available.
+The `plumed` view contains GROMACS patched with PLUMED. The version of GROMACS in this view may be different from the one in the `gromacs` view due to the compatibility requirements of PLUMED. CSCS will periodically update these user environment images to feature newer versions as they are made available.
 
 The `gromacs` view contains GROMACS 2024.1 that has been configured and tested for the highest performance on the Grace-Hopper nodes.
 
@@ -77,6 +81,8 @@ The SLURM submission script can be adapted from the template below to use the ap
 #SBATCH --cpus-per-task 32    # 32 OMP threads per MPI rank
 #SBATCH --account=ACCOUNT
 #SBATCH --hint=nomultithread  
+#SBATCH --uenv=<GROMACS_UENV>
+#SBATCH --view=gromacs
 
 export MPICH_GPU_SUPPORT_ENABLED=1
 export FI_CXI_RX_MATCH_MODE=software
@@ -107,7 +113,7 @@ This submission script is only representative. Users must run their input files 
 
 ## Scaling
 
-Benchmarking is done with large MD simulation of system of 1.4 million and 3 million atoms, in order to fully saturate the GPUs, from the [HECBioSim Benchmark Suite](https://www.hecbiosim.ac.uk/access-hpc/benchmarks).
+Benchmarking is done with large MD simulations of systems of 1.4 million and 3 million atoms, in order to fully saturate the GPUs, from the [HECBioSim Benchmark Suite](https://www.hecbiosim.ac.uk/access-hpc/benchmarks).
 
 In addition, the STMV (~1 million atom) benchmark that NVIDIA publishes on its [website](https://developer.nvidia.com/hpc-application-performance) was also tested for comparison. 
 
@@ -155,5 +161,7 @@ Protein atoms = 86,996  Lipid atoms = 867,784  Water atoms = 2,041,230  Ions = 1
 
 ## Further Documentation 
 
-* [GROMACS Homepage](https://www.gromacs.org)
+* [GROMACS Homepage][GROMACS]
 * [GROMACS Manual](https://manual.gromacs.org/2024.1/index.html)
+
+[GROMACS]: https://www.gromacs.org
