@@ -26,7 +26,8 @@ GROMACS is a joint effort, with contributions from developers around the world: 
 ## Daint on Alps (GH200)
 
 ### Setup
-On ALPS, we provide pre-built user environments containing GROMACS alongside all the required dependencies for the GH200 hardware setup. To access the `gmx_mpi` executable, we do the following:
+
+On Alps, we provide pre-built user environments containing GROMACS alongside all the required dependencies for the GH200 hardware setup. To access the `gmx_mpi` executable, we do the following:
 
 ```bash
 uenv image find 							  # list available images
@@ -40,7 +41,7 @@ gmx_mpi --version                             # check GROMACS version
 The images also provide two alternative views, namely `plumed` and `develop`.
 After starting the pulled image using `uenv start ...` , one may do the following see the available views.
 
-```bash
+```console
 $ uenv status
 /user-environment:gromacs-gh200
   GPU-optimised GROMACS with and without PLUMED, and the toolchain to build your own GROMACS.
@@ -51,7 +52,7 @@ $ uenv status
     plumed
 ```
 
-The `develop` view has all the required dependencies or GROMACS without the program itself. This is meant for those users who want to use a customized variant of GROMACS for their simulation which they build from source. This view makes it convenient for users as it provides the required compilers (GCC 12) along with the dependencies such as CMake, CUDA, hwloc, Cray MPICH, among many others which their GROMACS can use during build and installation. Users must enable this view each time they want to use their **custom GROMACS installation**.
+The `develop` view has all the required dependencies or GROMACS without the program itself. This is meant for those users who want to use a customized variant of GROMACS for their simulation which they build from source. This view makes it convenient for users as it provides the required compilers (GCC) along with the dependencies such as CMake, CUDA, hwloc, Cray MPICH, among many others which their GROMACS can use during build and installation. Users must enable this view each time they want to use their **custom GROMACS installation**.
 
 The `plumed` view contains GROMACS 2022.5 (older version) with PLUMED 2.9.0. This is due to the compatibility requirements of PLUMED. CSCS will periodically update these user environment images to feature newer versions as they are made available.
 
@@ -61,9 +62,7 @@ Use `exit` to leave the user environment and return to the original shell.
 
 ### How to Run
 
-To start a job, 2 bash scripts are required: a standard SLURM submission script, and a wrapper to start the CUDA MPS daemon (in order to have multiple MPI ranks per GPU).
-
-The CUDA MPS wrapper here: [Oversubscription of GPU cards](https://confluence.cscs.ch/spaces/KB/pages/859015189/Oversubscription+of+GPU+cards)
+To start a job, 2 bash scripts are required: a standard SLURM submission script, and a [wrapper to start the CUDA MPS daemon][ref-slurm-gh200-single-rank-per-gpu] (in order to have multiple MPI ranks per GPU).
 
 The wrapper script above needs to be made executable with `chmod +x mps-wrapper.sh`.
  
@@ -108,7 +107,7 @@ This submission script is only representative. Users must run their input files 
 
 ## Scaling
 
-Benchmarking done with large MD simulation problems of 1.4 million and 3 million atom systems in order to fully saturate the GPUs from the [HECBioSim Benchmark Suite](https://www.hecbiosim.ac.uk/access-hpc/benchmarks).
+Benchmarking is done with large MD simulation of system of 1.4 million and 3 million atoms, in order to fully saturate the GPUs, from the [HECBioSim Benchmark Suite](https://www.hecbiosim.ac.uk/access-hpc/benchmarks).
 
 In addition, the STMV (~1 million atom) benchmark that NVIDIA publishes on its [website](https://developer.nvidia.com/hpc-application-performance) was also tested for comparison. 
 
@@ -156,6 +155,5 @@ Protein atoms = 86,996  Lipid atoms = 867,784  Water atoms = 2,041,230  Ions = 1
 
 ## Further Documentation 
 
-[GROMACS Homepage](https://www.gromacs.org)
-
-[GROMACS Manual](https://manual.gromacs.org/2024.1/index.html)
+* [GROMACS Homepage](https://www.gromacs.org)
+* [GROMACS Manual](https://manual.gromacs.org/2024.1/index.html)
