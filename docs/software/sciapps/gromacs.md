@@ -7,14 +7,14 @@ It is primarily designed for biochemical molecules like proteins, lipids and nuc
 
 !!! note "uenvs"
 
-    [GROMACS] is provided on [ALPS][platforms-on-alps] via [uenv][ref-uenv].
+    [GROMACS] is provided on [Alps][ref-alps-platforms] via [uenv][ref-uenv].
     Please have a look at the [uenv documentation][ref-uenv] for more information about uenvs and how to use them.
 
-## Licensing Terms & Conditions
+## Licensing terms & conditions
 
 GROMACS is a joint effort, with contributions from developers around the world: users agree to acknowledge use of GROMACS in any reports or publications of results obtained with the Software (see [GROMACS Homepage](https://www.gromacs.org/about.html) for details).
 
-## Key Features
+## Key features
 
 1. **Molecular Dynamics Simulations**: GROMACS performs classical MD simulations, which compute the trajectories of atoms based on Newton's laws of motion. It integrates the equations of motion to simulate the behavior of molecular systems, capturing their dynamic properties and conformational changes.
 
@@ -64,7 +64,7 @@ The `gromacs` view contains GROMACS 2024.1 that has been configured and tested f
 
 Use `exit` to leave the user environment and return to the original shell.
 
-### How to Run
+### How to run
 
 To start a job, 2 bash scripts are required: a standard SLURM submission script, and a [wrapper to start the CUDA MPS daemon][ref-slurm-gh200-single-rank-per-gpu] (in order to have multiple MPI ranks per GPU).
 
@@ -100,7 +100,7 @@ This can be run using `sbatch launch.sbatch` on the login node with the user env
 
 This submission script is only representative. Users must run their input files with a range of parameters to find an optimal set for the production runs. Some hints for this exploration below:
 
-!!! note "Configuration Hints"
+!!! note "Configuration hints"
 
 	- Each Grace CPU has 72 cores, but a small number of them are used for the underlying processes such as runtime daemons. So all 72 cores are not available for compute. To be safe, do not exceed more than 64 OpenMP threads on a single CPU even if it leads to a handful of cores idling.
 	- Each node has 4 Grace CPUs and 4 Hopper GPUs. When running 8 MPI ranks (meaning two per CPU), keep in mind to not ask for more than 32 OpenMP threads per rank. That way no more than 64 threads will be running on a single CPU.
@@ -119,7 +119,7 @@ In addition, the STMV (~1 million atom) benchmark that NVIDIA publishes on its [
 
 The STMV test case is a fairly large problem size, with constraints operating only on a smaller set of atoms (h-bonds) which allows the update step to also take place on GPUs. This makes the simulation almost **fully GPU resident** with the key performance intensive bits namely the long-range forces (PME), short-range non-bonded forces (NB) and bonded forces all running on the GPU. On a single node, this leads to the following scaling on GROMACS 2024.1.
 
-#### STMV - Multiple Ranks - Single Node Upto 4 GPUs
+#### STMV - Multiple ranks - Single node up to 4 GPUs
 
 | #GPUs  | ns/day  | Speedup |
 | ------ | ------- | ------- |
@@ -130,7 +130,7 @@ The STMV test case is a fairly large problem size, with constraints operating on
 
 The other benchmark cases from HECBioSim simulates a pair of proteins (hEGFR Dimers/Tetramers of [1IVO](https://www.rcsb.org/structure/1IVO) and [1NQL](https://www.rcsb.org/structure/1NQL)) with a large lipid membrane. This also involves a fairly large number of charged ions which increases the proportion of PME in the total compute workload. For these simulations, constraints are applicable on all atoms, which effectively **prevents the update from happening in the GPU**, thus negatively impacting scaling due large host-to-device data transfers and key computations happening on the CPU. These show the following scaling characteristics on GROMACS 2024.1:
 
-#### 1.4m Atom System - Multiple Ranks - Single Node
+#### 1.4m Atom System - Multiple ranks - Single node
 
 Total number of atoms = 1,403,182
 
@@ -141,7 +141,7 @@ Protein atoms = 43,498  Lipid atoms = 235,304  Water atoms = 1,123,392  Ions = 9
 | 1      |  31.243 | 1x      |
 | 4      |  55.936 | 1.79x   |
 
-#### 3m Atom System - Single Node - Multiple Ranks
+#### 3m Atom System - Single node - Multiple ranks
 
 Total number of atoms = 2,997,924
 
@@ -159,7 +159,7 @@ Protein atoms = 86,996  Lipid atoms = 867,784  Water atoms = 2,041,230  Ions = 1
 	- If the problem allows the integration step to take place on the GPU with `-update gpu`, that can lead to significant performance and scaling gains as it allows an even greater part of the computations to take place on the GPU.
 	- A single node of the GH200 cluster offers 4x CPU+GPU. For problems that can benefit from scaling beyond a single node, use the flag `export FI_CXI_RX_MATCH_MODE=software` in the SBATCH script. The best use of resources in terms of node-hours might be achieved on a single node for most simulations.
 
-## Further Documentation 
+## Further documentation 
 
 * [GROMACS Homepage][GROMACS]
 * [GROMACS Manual](https://manual.gromacs.org/2024.1/index.html)
